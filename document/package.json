@@ -22,7 +22,8 @@
     "url": "https://github.com/andela-sjames/serverless-getPage/issues"
   },
   "homepage": "https://github.com/andela-sjames/serverless-getPage#readme",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "serverless-python-requirements": "4.3.0"
   }
 }

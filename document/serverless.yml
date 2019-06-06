@@ -28,10 +28,9 @@ package:
 
 plugins:
   - serverless-python-requirements
-
 custom:
   pythonRequirements:
-    dockerizePip: non-linux
+    dockerizePip: true
 
 functions:
   get_page_title_handler:
