@@ -6,6 +6,8 @@ from urllib import request, error, parse
 import boto3
 from bs4 import BeautifulSoup as bs
 
+s3_bucket_url = None
+
 # connect to s3
 s3 = boto3.client('s3')
 
@@ -17,6 +19,7 @@ def get_page_title_handler(event, context):
 
     failure = None
     page_title = "NO TITLE"
+    global s3_bucket_url
     url = event['page_url']
     try:
         response = request.urlopen(url)
@@ -30,10 +33,11 @@ def get_page_title_handler(event, context):
 
     # get the webpage and store to s3
     if failure is not None:
-       s3_bucket_url = store_response_to_s3(webpage)
-       save_to_db(page_title)
-
-    return build_response(failure, page_title, s3_obj_url)
+        s3_bucket_url = store_response_to_s3(webpage)
+        save_to_db(page_title)
+    
+    s3_bucket_url = s3_bucket_url if s3_bucket_url else None
+    return build_response(failure, page_title, s3_bucket_url)
 
 def store_response_to_s3(webpage):
     page_body = webpage.content
@@ -57,7 +61,7 @@ def save_to_db(title):
         }
     )
 
-def build_response(failure, page_title, s3_bucket_url=None):
+def build_response(failure, page_title, s3_bucket_url):
     
     body = {
         "page_title": page_title,
