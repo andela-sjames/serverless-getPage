@@ -31,10 +31,10 @@ functions:
 resources:
   Resources:
     EmptorUrlDynamodbTable:
-      Type: AWS:DynamoDB::Table
+      Type: AWS::DynamoDB::Table
       Properties:
         TableName: UrlDocument
-        AttributeDefinitons:
+        AttributeDefinitions:
           - AttributeName: title
             AttributeType: S
         KeySchema:
