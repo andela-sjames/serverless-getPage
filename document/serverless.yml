@@ -1,11 +1,5 @@
 
-service: emptor # NOTE: update this with your service name
-#app: your-app-name
-#tenant: your-tenant-name
-
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X"
+service: emptor
 
 provider:
   name: aws
@@ -17,10 +11,6 @@ provider:
         - "s3:*"
       Resource:
         - "*"
-
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
 
 package:
   exclude:
@@ -38,7 +28,6 @@ functions:
     name: ${self:provider.stage}-getPageTitle
     description: Lambda function to get a page title from a given url
 
-# you can add CloudFormation resource templates here
 resources:
   Resources:
     EmptorUrlDynamodbTable:
