@@ -1,0 +1,28 @@
+{
+  "name": "document",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andela-sjames/serverless-getPage.git"
+  },
+  "keywords": [
+    "serverless",
+    "lamda",
+    "s3",
+    "dynamodb"
+  ],
+  "author": "Samuel, James",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andela-sjames/serverless-getPage/issues"
+  },
+  "homepage": "https://github.com/andela-sjames/serverless-getPage#readme",
+  "dependencies": {
+    "serverless-python-requirements": "4.3.0"
+  }
+}
