@@ -13,6 +13,8 @@ npm install serverless
 ```
 
 ### setup AWS
+*NB:* IAM AWS user should have programmatic access with policy to interact with lambda services
+such as DynamoDB, S3, Lambda, Cloudformation, Cloudwatch and IAM amongst others depending on your use-case.
 ```bash
 serverless config credentials --provider aws --key your_xxx_key --secret your_xxx_secret
 ```

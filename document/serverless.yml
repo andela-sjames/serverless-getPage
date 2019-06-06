@@ -22,6 +22,13 @@ service: emptor # NOTE: update this with your service name
 provider:
   name: aws
   runtime: python3.7
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "dynamodb:*"
+        - "s3:*"
+      Resource:
+        - "*"
 
 # you can overwrite defaults here
 #  stage: dev
@@ -59,6 +66,8 @@ provider:
 functions:
   get_page_title_handler:
     handler: handler.get_page_title_handler
+    name: ${self:provider.stage}-getPageTitle
+    description: Lambda function to get a page title from a given url
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -95,13 +104,22 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+resources:
+  Resources:
+    EmptorUrlDynamodbTable:
+      Type: AWS:DynamoDB::Table
+      Properties:
+        TableName: UrlDocument
+        AttributeDefinitons:
+          - AttributeName: title
+            AttributeType: S
+        KeySchema:
+          - AttributeName: title
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    EmptorUrlS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: url-bucket-1047
