@@ -12,7 +12,7 @@ s3_bucket_url = None
 s3 = boto3.client('s3')
 
 # connect to dynamodb
-db_table = boto3.resource('dynamodb').Table('UrlDocument')
+dynamodb = boto3.client('dynamodb')
 
 
 def get_page_title_handler(event, context):
@@ -32,7 +32,7 @@ def get_page_title_handler(event, context):
         failure = str(e)
 
     # get the webpage and store to s3
-    if failure is not None:
+    if not failure:
         s3_bucket_url = store_response_to_s3(webpage)
         save_to_db(page_title)
     
@@ -40,7 +40,7 @@ def get_page_title_handler(event, context):
     return build_response(failure, page_title, s3_bucket_url)
 
 def store_response_to_s3(webpage):
-    page_body = webpage.content
+    page_body = webpage.encode()
     s3_bucket = 'url-bucket-1047'
     s3_key = f'pages/{id_generator()}'
     s3.put_object(
@@ -55,11 +55,13 @@ def store_response_to_s3(webpage):
     return s3_bucket_url
 
 def save_to_db(title):
-    response = db_table.put_item(
+    dynamodb.put_item(
+        TableName='UrlDocument', 
         Item={
-            'title': title,
+            'title':{'S':title}
         }
     )
+
 
 def build_response(failure, page_title, s3_bucket_url):
     
