@@ -40,7 +40,6 @@ functions:
     name: createReqIdentifier
     description: Lambda function to create a request identifier
 
-
 resources:
   Resources:
     EmptorUrlDynamodbTable:
@@ -57,7 +56,7 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES
+          StreamViewType: NEW_IMAGE
     EmptorUrlS3Bucket:
       Type: AWS::S3::Bucket
       Properties:
