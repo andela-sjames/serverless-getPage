@@ -43,10 +43,6 @@ resources:
         AttributeDefinitions:
           - AttributeName: uuid
             AttributeType: S
-          - AttributeName: url
-            AttributeType: S
-          - AttributeName: state
-            AttributeType: S
         KeySchema:
           - AttributeName: uuid
             KeyType: HASH

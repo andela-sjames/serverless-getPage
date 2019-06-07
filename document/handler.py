@@ -22,7 +22,6 @@ def get_page_title_handler(event, context):
     page_title = "NO TITLE"
     global s3_bucket_url
     url_uuid = event['url_uuid']
-
     url = get_url_from_uuid(url_uuid)
     try:
         response = request.urlopen(url)
@@ -31,8 +30,10 @@ def get_page_title_handler(event, context):
             page_title = webpage.title.string
         except Exception as e:
             failure = str(e)
+            print(failure)
     except Exception as e:
         failure = str(e)
+        print(failure)
 
     # get the webpage and store to s3
     if not failure:

@@ -65,7 +65,9 @@ def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
 
 # generate a UUID based on MD5 hash with a URL string
 def generate_identifier(page_url):
-    return uuid.uuid3(uuid.NAMESPACE_URL, page_url)
+    url_uuid = uuid.uuid3(uuid.NAMESPACE_URL, page_url)
+    return url_uuid.hex
+
 
 
 def save_to_record(url, url_uuid):
@@ -74,10 +76,10 @@ def save_to_record(url, url_uuid):
         Item={
             'uuid': {
                 'S': url_uuid
-            }
+            },
             'url': {
                 'S': url
-            }
+            },
             'state': {
                 'S': 'PENDING'
             }
@@ -99,7 +101,7 @@ def get_url_from_uuid(url_uuid):
         TableName='UrlDocument',
         Key={
             'uuid': {'S': url_uuid,}
-        }
+        },
         ProjectionExpression='uuid, url',
     )
 
@@ -114,7 +116,7 @@ def update_record(s3_bucket_url, page_title, url_uuid):
             'state': {
                 'S': 'PROCESSED',
             }
-        }
+        },
         UpdateExpression='SET title=:value1, s3url=:value2', 
         ExpressionAttributeValues={
             ':value1': {
@@ -132,7 +134,7 @@ def get_record_from_uuid(url_uuid):
         TableName='UrlDocument',
         Key={
             'uuid': {'S': url_uuid,}
-        }
+        },
         ProjectionExpression='',
     )
 
