@@ -21,7 +21,7 @@ such as DynamoDB, S3, Lambda, Cloudformation, Cloudwatch and IAM amongst others 
 serverless config credentials --provider aws --key your_xxx_key --secret your_xxx_secret
 ```
 
-## v3
+## v4
 Change directory to `document` & run  `npm install`
 NB: You  should have docker running on your system before deploying, as this allows python packages to be added to the lambda function.
 
