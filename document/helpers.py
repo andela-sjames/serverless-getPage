@@ -2,6 +2,7 @@
 import json
 import random
 import string
+import uuid
 
 import boto3
 
@@ -38,7 +39,7 @@ def save_to_db(title):
 
 
 def build_response(failure, page_title, s3_bucket_url):
-
+    
     body = {
         "page_title": page_title,
         "s3_bucket_url": s3_bucket_url,
@@ -56,3 +57,9 @@ def build_response(failure, page_title, s3_bucket_url):
 
 def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
+
+# generate a UUID based on MD5 hash with a URL string
+
+
+def generate_identifier(page_url):
+    return uuid.uuid3(uuid.NAMESPACE_URL, page_url)

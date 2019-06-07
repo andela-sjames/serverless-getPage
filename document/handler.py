@@ -5,7 +5,8 @@ from helpers import (
     store_response_to_s3,
     save_to_db,
     build_response,
-    id_generator
+    id_generator,
+    generate_identifier,
 )
 
 s3_bucket_url = None
@@ -34,3 +35,9 @@ def get_page_title_handler(event, context):
 
     s3_bucket_url = s3_bucket_url if s3_bucket_url else None
     return build_response(failure, page_title, s3_bucket_url)
+
+
+def create_request_identifier_handler(event, context):
+    url = event['page_url']
+    url_uuid = generate_identifier(url)
+    pass
