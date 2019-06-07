@@ -7,8 +7,10 @@ from helpers import (
     build_response,
     id_generator,
     generate_identifier,
-    send_data_to_db,
-    invoke_processing_lambda
+    save_to_record,
+    invoke_processing_lambda,
+    get_url_from_uuid,
+    update_record,
 )
 
 s3_bucket_url = None
@@ -19,7 +21,9 @@ def get_page_title_handler(event, context):
     failure = None
     page_title = "NO TITLE"
     global s3_bucket_url
-    url = event['page_url']
+    url_uuid = event['url_uuid']
+
+    url = get_url_from_uuid(url_uuid)
     try:
         response = request.urlopen(url)
         webpage = bs(response, features="html.parser")
@@ -33,16 +37,15 @@ def get_page_title_handler(event, context):
     # get the webpage and store to s3
     if not failure:
         s3_bucket_url = store_response_to_s3(webpage)
-        save_to_db(page_title)
-
-    s3_bucket_url = s3_bucket_url if s3_bucket_url else None
-    return build_response(failure, page_title, s3_bucket_url)
+        update_record(s3_bucket_url, page_title, url_uuid)
+    else:
+        raise Exception(failure)
 
 
 def create_request_identifier_handler(event, context):
     url = event['page_url']
     url_uuid = generate_identifier(url)
-    send_data_to_db(url, url_uuid)
+    save_to_record(url, url_uuid)
     data = {
         "url_uuid": url_uuid
     }

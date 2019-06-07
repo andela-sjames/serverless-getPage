@@ -5,6 +5,7 @@ import string
 import uuid
 
 import boto3
+from dynamodb_json import json_util
 
 # connect to s3
 s3 = boto3.client('s3')
@@ -67,17 +68,75 @@ def generate_identifier(page_url):
     return uuid.uuid3(uuid.NAMESPACE_URL, page_url)
 
 
-def send_data_to_db(url, url_uuid):
+def save_to_record(url, url_uuid):
     dynamodb.put_item(
         TableName='UrlDocument',
         Item={
-            'uuid': {'S': url_uuid}
-            'url': {'S': url}
-            'state': {'S': 'PENDING'}
+            'uuid': {
+                'S': url_uuid
+            }
+            'url': {
+                'S': url
+            }
+            'state': {
+                'S': 'PENDING'
+            }
         }
     )
 
+
 # invoke your lambda function from another lambda function.
 def invoke_processing_lambda(data):
-    invokeLambda.invoke(FunctionName = 'getPageTitle', InvocationType = 'Event', Payload = json.dumps(data))
+    invokeLambda.invoke(
+        FunctionName='getPageTitle',
+        InvocationType = 'Event',
+        Payload = json.dumps(data)
+    )
 
+
+def get_url_from_uuid(url_uuid):
+    resp = dynamodb.get_item(
+        TableName='UrlDocument',
+        Key={
+            'uuid': {'S': url_uuid,}
+        }
+        ProjectionExpression='uuid, url',
+    )
+
+    url = resp['Item']['url']['S']
+    return url
+
+
+def update_record(s3_bucket_url, page_title, url_uuid):
+    dynamodb.update_item(
+        Key={'uuid': url_uuid},
+        AttributeUpdates={
+            'state': {
+                'S': 'PROCESSED',
+            }
+        }
+        UpdateExpression='SET title=:value1, s3url=:value2', 
+        ExpressionAttributeValues={
+            ':value1': {
+                'S': page_title
+            },
+            ':value2': {
+                'S': s3_bucket_url
+            }
+        },
+    )
+
+
+def get_record_from_uuid(url_uuid):
+    resp = dynamodb.get_item(
+        TableName='UrlDocument',
+        Key={
+            'uuid': {'S': url_uuid,}
+        }
+        ProjectionExpression='',
+    )
+
+    dynamodb_json = resp['Item']
+    obj = json.loads(dynamodb_json)
+
+    return obj
