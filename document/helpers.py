@@ -109,11 +109,9 @@ def get_url_from_uuid(url_uuid):
 
 def update_record(s3_bucket_url, page_title, url_uuid):
     dynamodb.update_item(
-        Key={'uuid': url_uuid},
-        AttributeUpdates={
-            'state': {
-                'S': 'PROCESSED',
-            }
+        TableName='UrlDocument',
+        Key={
+            'uuid': {'S': url_uuid}
         },
         UpdateExpression='SET title=:value1, s3url=:value2',
         ExpressionAttributeValues={
@@ -122,6 +120,21 @@ def update_record(s3_bucket_url, page_title, url_uuid):
             },
             ':value2': {
                 'S': s3_bucket_url
+            }
+        },
+    )
+
+
+def update_record_processed(url_uuid):
+    dynamodb.update_item(
+        TableName='UrlDocument',
+        Key={
+            'uuid': {'S': url_uuid}
+        },
+        AttributeUpdates={
+            'state': {
+                'Value': {'S': 'PROCESSED'},
+                'Action': 'PUT'
             }
         },
     )

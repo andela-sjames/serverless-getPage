@@ -11,6 +11,7 @@ from helpers import (
     invoke_processing_lambda,
     get_url_from_uuid,
     update_record,
+    update_record_processed
 )
 
 s3_bucket_url = None
@@ -30,15 +31,14 @@ def get_page_title_handler(event, context):
             page_title = webpage.title.string
         except Exception as e:
             failure = str(e)
-            print(failure)
     except Exception as e:
         failure = str(e)
-        print(failure)
 
     # get the webpage and store to s3
     if not failure:
         s3_bucket_url = store_response_to_s3(webpage)
         update_record(s3_bucket_url, page_title, url_uuid)
+        update_record_processed(url_uuid)
     else:
         raise Exception(failure)
 
