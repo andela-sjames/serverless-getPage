@@ -43,7 +43,6 @@ def save_to_db(title):
 
 
 def build_response(failure, page_title, s3_bucket_url):
-    
     body = {
         "page_title": page_title,
         "s3_bucket_url": s3_bucket_url,
@@ -69,7 +68,6 @@ def generate_identifier(page_url):
     return url_uuid.hex
 
 
-
 def save_to_record(url, url_uuid):
     dynamodb.put_item(
         TableName='UrlDocument',
@@ -91,8 +89,8 @@ def save_to_record(url, url_uuid):
 def invoke_processing_lambda(data):
     invokeLambda.invoke(
         FunctionName='getPageTitle',
-        InvocationType = 'Event',
-        Payload = json.dumps(data)
+        InvocationType='Event',
+        Payload=json.dumps(data)
     )
 
 
@@ -100,7 +98,7 @@ def get_url_from_uuid(url_uuid):
     resp = dynamodb.get_item(
         TableName='UrlDocument',
         Key={
-            'uuid': {'S': url_uuid,}
+            'uuid': {'S': url_uuid}
         },
         ProjectionExpression='uuid, url',
     )
@@ -117,7 +115,7 @@ def update_record(s3_bucket_url, page_title, url_uuid):
                 'S': 'PROCESSED',
             }
         },
-        UpdateExpression='SET title=:value1, s3url=:value2', 
+        UpdateExpression='SET title=:value1, s3url=:value2',
         ExpressionAttributeValues={
             ':value1': {
                 'S': page_title
@@ -133,7 +131,7 @@ def get_record_from_uuid(url_uuid):
     resp = dynamodb.get_item(
         TableName='UrlDocument',
         Key={
-            'uuid': {'S': url_uuid,}
+            'uuid': {'S': url_uuid}
         },
         ProjectionExpression='',
     )
