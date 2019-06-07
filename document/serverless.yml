@@ -28,11 +28,12 @@ functions:
     handler: handler.get_page_title_handler
     name: getPageTitle
     description: Lambda function to get a page title from a given url
+    events: 
+      - stream: arn:aws:dynamodb:us-east-1:768614346553:table/UrlDocument/stream/2019-06-07T14:34:54.231
   create_request_identifier_handler:
     handler: handler.create_request_identifier_handler
     name: createReqIdentifier
     description: Lambda function to create a request identifier
-
 
 resources:
   Resources:
@@ -49,6 +50,8 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
     EmptorUrlS3Bucket:
       Type: AWS::S3::Bucket
       Properties:
