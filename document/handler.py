@@ -19,8 +19,16 @@ def get_page_title_handler(event, context):
     failure = None
     page_title = "NO TITLE"
     global s3_bucket_url
+
+    records = event['Records']
+    print("Received %s records" % len(records))
+
+    ####
     url_uuid = event['url_uuid']
     url = get_url_from_uuid(url_uuid)
+    ####
+
+
     try:
         response = request.urlopen(url)
         webpage = bs(response, features="html.parser")
@@ -47,6 +55,8 @@ def create_request_identifier_handler(event, context):
     data = {
         "url_uuid": url_uuid
     }
+
+    # use dynamodb streams here
     invoke_processing_lambda(data)
 
     return url_uuid
