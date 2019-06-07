@@ -7,6 +7,8 @@ from helpers import (
     build_response,
     id_generator,
     generate_identifier,
+    send_data_to_db,
+    invoke_processing_lambda
 )
 
 s3_bucket_url = None
@@ -40,4 +42,10 @@ def get_page_title_handler(event, context):
 def create_request_identifier_handler(event, context):
     url = event['page_url']
     url_uuid = generate_identifier(url)
-    pass
+    send_data_to_db(url, url_uuid)
+    data = {
+        "url_uuid": url_uuid
+    }
+    invoke_processing_lambda(data)
+
+    return url_uuid
