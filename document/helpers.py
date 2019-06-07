@@ -145,10 +145,9 @@ def get_record_from_uuid(url_uuid):
         Key={
             'uuid': {'S': url_uuid}
         },
-        ProjectionExpression='',
     )
 
     dynamodb_json = resp['Item']
-    obj = json.loads(dynamodb_json)
+    obj = json_util.loads(dynamodb_json)
 
-    return obj
+    return json.dumps(obj)
