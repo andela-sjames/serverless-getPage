@@ -100,7 +100,6 @@ def get_url_from_uuid(url_uuid):
         Key={
             'uuid': {'S': url_uuid}
         },
-        ProjectionExpression='uuid, url',
     )
 
     url = resp['Item']['url']['S']
