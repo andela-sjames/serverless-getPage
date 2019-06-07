@@ -29,14 +29,7 @@ functions:
     name: getPageTitle
     description: Lambda function to get a page title from a given url
     events:
-      - stream:
-        type: dynamodb
-        batchSize: 1
-        startingPosition: LATEST
-        arn:
-          Fn::GetAtt:
-            - UrlDocument
-            - arn:aws:dynamodb:us-east-1:768614346553:table/UrlDocument
+      - stream: arn:aws:dynamodb:us-east-1:768614346553:table/UrlDocument/stream/2019-06-19T16:40:37.833
   create_request_identifier_handler:
     handler: handler.create_request_identifier_handler
     name: createReqIdentifier
