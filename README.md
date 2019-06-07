@@ -7,6 +7,8 @@ https://serverless.com/framework/docs/providers/aws/guide/intro/
 
 ## Run locally?
 
+download the zip file, unzip and change directory into document folder.
+
 ### Install serverless
 ```bash
 npm install -g serverless
@@ -19,7 +21,7 @@ such as DynamoDB, S3, Lambda, Cloudformation, Cloudwatch and IAM amongst others 
 serverless config credentials --provider aws --key your_xxx_key --secret your_xxx_secret
 ```
 
-## v2
+## v3
 Change directory to `document` & run  `npm install`
 NB: You  should have docker running on your system before deploying, as this allows python packages to be added to the lambda function.
 
@@ -29,7 +31,14 @@ NB: You  should have docker running on your system before deploying, as this all
 serverless deploy
 ```
 
-Once deployed you can go to the us-west-1 region on AWS to view the services and to invoke the lambda function as well. 
+Once deployed you can go to the us-west-1 region on AWS to view the services and to invoke the lambda function as well.
+
+OR
+
+Run this command locally to invoke the AWS lambda function
+```bash
+serverless invoke -f create_request_identifier_handler -s dev -r us-east-1 -l -p event.json
+```
 
 ### removal
 ```bash

@@ -1,18 +1,20 @@
-import json
-import random
-import string
-from urllib import request, error, parse
-
-import boto3
+from urllib import request
 from bs4 import BeautifulSoup as bs
 
+from helpers import (
+    store_response_to_s3,
+    save_to_db,
+    build_response,
+    id_generator,
+    generate_identifier,
+    save_to_record,
+    invoke_processing_lambda,
+    get_url_from_uuid,
+    update_record,
+    update_record_processed
+)
+
 s3_bucket_url = None
-
-# connect to s3
-s3 = boto3.client('s3')
-
-# connect to dynamodb
-dynamodb = boto3.client('dynamodb')
 
 
 def get_page_title_handler(event, context):
@@ -20,7 +22,8 @@ def get_page_title_handler(event, context):
     failure = None
     page_title = "NO TITLE"
     global s3_bucket_url
-    url = event['page_url']
+    url_uuid = event['url_uuid']
+    url = get_url_from_uuid(url_uuid)
     try:
         response = request.urlopen(url)
         webpage = bs(response, features="html.parser")
@@ -34,53 +37,19 @@ def get_page_title_handler(event, context):
     # get the webpage and store to s3
     if not failure:
         s3_bucket_url = store_response_to_s3(webpage)
-        save_to_db(page_title)
-
-    s3_bucket_url = s3_bucket_url if s3_bucket_url else None
-    return build_response(failure, page_title, s3_bucket_url)
-
-
-def store_response_to_s3(webpage):
-    page_body = webpage.encode()
-    s3_bucket = 'url-bucket-1047'
-    s3_key = f'pages/{id_generator()}'
-    s3.put_object(
-        ACL='public-read',
-        Body=page_body,
-        Bucket=s3_bucket,
-        Key=s3_key
-    )
-
-    # get s3 object url using virtual hosted style
-    s3_bucket_url = f'https://{s3_bucket}.s3.amazonaws.com/{s3_key}'
-    return s3_bucket_url
+        update_record(s3_bucket_url, page_title, url_uuid)
+        update_record_processed(url_uuid)
+    else:
+        raise Exception(failure)
 
 
-def save_to_db(title):
-    dynamodb.put_item(
-        TableName='UrlDocument',
-        Item={
-            'title': {'S': title}
-        }
-    )
-
-
-def build_response(failure, page_title, s3_bucket_url):
-
-    body = {
-        "page_title": page_title,
-        "s3_bucket_url": s3_bucket_url,
-        "failure": failure
+def create_request_identifier_handler(event, context):
+    url = event['page_url']
+    url_uuid = generate_identifier(url)
+    save_to_record(url, url_uuid)
+    data = {
+        "url_uuid": url_uuid
     }
+    invoke_processing_lambda(data)
 
-    statusCode = 400 if failure else 200
-    response = {
-        "statusCode": statusCode,
-        "body": json.dumps(body)
-    }
-
-    return response
-
-
-def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
+    return url_uuid

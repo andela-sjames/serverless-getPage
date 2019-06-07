@@ -9,6 +9,7 @@ provider:
       Action:
         - "dynamodb:*"
         - "s3:*"
+        - "lambda:*"
       Resource:
         - "*"
 
@@ -25,8 +26,13 @@ custom:
 functions:
   get_page_title_handler:
     handler: handler.get_page_title_handler
-    name: ${self:provider.stage}-getPageTitle
+    name: getPageTitle
     description: Lambda function to get a page title from a given url
+  create_request_identifier_handler:
+    handler: handler.create_request_identifier_handler
+    name: createReqIdentifier
+    description: Lambda function to create a request identifier
+
 
 resources:
   Resources:
@@ -35,10 +41,10 @@ resources:
       Properties:
         TableName: UrlDocument
         AttributeDefinitions:
-          - AttributeName: title
+          - AttributeName: uuid
             AttributeType: S
         KeySchema:
-          - AttributeName: title
+          - AttributeName: uuid
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
