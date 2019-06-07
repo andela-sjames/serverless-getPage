@@ -31,6 +31,8 @@ functions:
     events:
       - stream:
         type: dynamodb
+        batchSize: 1
+        startingPosition: LATEST
         arn:
           Fn::GetAtt:
             - UrlDocument
