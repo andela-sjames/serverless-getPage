@@ -31,14 +31,33 @@ NB: You  should have docker running on your system before deploying, as this all
 serverless deploy
 ```
 
-Once deployed you can go to the us-west-1 region on AWS to view the services and to invoke the lambda function as well.
+Once deployed go to your dynamodb service on us-east-1; under the `overview` tab for table `UrlDocument`
+get the arn from the `Latest stream ARN` label
 
-OR
+```
+arn:aws:dynamodb:us-east-1:{your_account_id}:table/UrlDocument/stream/2019-06-07T14:34:54.231
+```
+
+update the serverless.yml config under
+```functions.get_page_title_handler.events.stream ```
+
+```yml
+events:
+      - stream: arn:aws:dynamodb:us-east-1:{your_account_id}:table/UrlDocument/stream/2019-06-07T14:34:54.231
+```
+
+### Redeploy:
+### deploy
+```bash
+serverless deploy
+```
 
 Run this command locally to invoke the AWS lambda function
 ```bash
 serverless invoke -f create_request_identifier_handler -s dev -r us-east-1 -l -p event.json
 ```
+
+Verify by checking s3 and dynamoDB for the latest changes/updates.
 
 ### removal
 ```bash
