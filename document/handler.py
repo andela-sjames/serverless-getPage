@@ -1,6 +1,10 @@
 from urllib import request
 from bs4 import BeautifulSoup as bs
 
+import logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 from helpers import (
     store_response_to_s3,
     generate_identifier,
@@ -21,7 +25,9 @@ def get_page_title_handler(event, context):
     global s3_bucket_url
 
     records = event['Records']
-    print("Received %s records" % len(records))
+
+    # log to cloudwatch
+    logger.info(records)
 
     for record in records:
         if record['eventName'].upper() in {'INSERT', 'MODIFY'}:
@@ -50,8 +56,8 @@ def get_page_title_handler(event, context):
         # get the webpage and store to s3
         if not failure:
             s3_bucket_url = store_response_to_s3(webpage)
-            update_record(s3_bucket_url, page_title, url_uuid)
-            update_record_processed(url_uuid)
+            update_record(s3_bucket_url, page_title, record_id)
+            update_record_processed(record_id)
         else:
             raise Exception(failure)
 
