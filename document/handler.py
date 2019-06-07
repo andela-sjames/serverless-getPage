@@ -35,9 +35,10 @@ def get_page_title_handler(event, context):
     if not failure:
         s3_bucket_url = store_response_to_s3(webpage)
         save_to_db(page_title)
-    
+
     s3_bucket_url = s3_bucket_url if s3_bucket_url else None
     return build_response(failure, page_title, s3_bucket_url)
+
 
 def store_response_to_s3(webpage):
     page_body = webpage.encode()
@@ -54,17 +55,18 @@ def store_response_to_s3(webpage):
     s3_bucket_url = f'https://{s3_bucket}.s3.amazonaws.com/{s3_key}'
     return s3_bucket_url
 
+
 def save_to_db(title):
     dynamodb.put_item(
-        TableName='UrlDocument', 
+        TableName='UrlDocument',
         Item={
-            'title':{'S':title}
+            'title': {'S': title}
         }
     )
 
 
 def build_response(failure, page_title, s3_bucket_url):
-    
+
     body = {
         "page_title": page_title,
         "s3_bucket_url": s3_bucket_url,
@@ -78,6 +80,7 @@ def build_response(failure, page_title, s3_bucket_url):
     }
 
     return response
+
 
 def id_generator(size=8, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
