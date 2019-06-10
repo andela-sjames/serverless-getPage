@@ -4,6 +4,9 @@
 # Reference:
 https://serverless.com/framework/docs/providers/aws/guide/intro/
 
+![Architecture](lambda_arc.png)
+
+
 
 ## Run locally?
 
