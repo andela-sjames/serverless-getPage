@@ -4,7 +4,7 @@
 # Reference:
 https://serverless.com/framework/docs/providers/aws/guide/intro/
 
-![Architecture](https://raw.githubusercontent.com/andela-sjames/serverless-getPage/lambda_arc.png)
+![Architecture](lambda_arc.png)
 
 
 
