@@ -1,7 +1,7 @@
 beautifulsoup4==4.7.1
 boto3==1.9.162
 botocore==1.12.162
-certifi==2019.3.9
+certifi==2022.12.7
 chardet==3.0.4
 docutils==0.14
 dynamodb-json==1.3
